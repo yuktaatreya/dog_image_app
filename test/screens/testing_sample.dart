@@ -1,42 +1,44 @@
-void main() {
-  MockAppRepository repository = MockAppRepository();
-  setUp(() {
-    repository = MockAppRepository();
+import 'package:bloc_test/bloc_test.dart';
+import 'package:image_app/screens/first_screen/api/first_screen_api_service.dart';
+import 'package:image_app/screens/first_screen/api/responses/user_image_response.dart';
+import 'package:image_app/screens/first_screen/bloc/first_screen_bloc.dart';
+import 'package:image_app/screens/first_screen/bloc/first_screen_events.dart';
+import 'package:image_app/screens/first_screen/bloc/first_screen_states.dart';
+import 'package:mocktail/mocktail.dart';
+import 'first_screen_bloc_test.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+class MockFirstScreenApiService extends Mock implements FirstScreenApiService{}
+
+
+void main (){
+  late MockFirstScreenApiService mockFirstScreenApiService;
+  setUp((){
+    mockFirstScreenApiService=MockFirstScreenApiService();
+    when(mockFirstScreenApiService.fetchUserImage).
+    thenAnswer((_)  =>Future.value(
+        ImageFetchSuccessful(
+            UserImage(url: "https://random.dog/4269edc8-56bd-49d9-8288-78f824b8f701.JPG",
+                fileSizeBytes: 2105001))
+    )
+    );
+
   });
-
-  group('LoginBloc test', () {
-    final user =
-    User(1, 'email', 'firstName', 'lastName', 'status', 'username', null);
-
-    test('emits LoginLoading & LoginSuccess after successful login', () {
-      when(repository.logIn('email', 'password'))
-          .thenAnswer((realInvocation) async => user);
-
-      final bloc = LoginBloc(repository);
-      bloc.add(LogIn('email', 'password'));
-
-      expectLater(
-          bloc,
-          emitsInOrder([
-            LoginInitial(),
-            LoginLoading(),
-            LoginSuccess(user),
-          ]));
-    });
-
-    blocTest<LoginBloc, LoginState>(
-      'emits LoginLoading & LoginSuccess after successful login',
-      build: () {
-        when(repository.logIn('email', 'password'))
-            .thenAnswer((realInvocation) async => user);
-        return LoginBloc(repository);
+  group("Fetch User Image", (){
+    blocTest<FirstScreenBloc,FirstScreenState>(
+      'emits [Imageloading, ImageFetchSuccessful] when successful',
+      setUp: () {
+        when(mockFirstScreenApiService.fetchUserImage).
+        thenAnswer((_)  =>Future.value(
+            ImageFetchSuccessful(
+                UserImage(url: "https://random.dog/4269edc8-56bd-49d9-8288-78f824b8f701.JPG",
+                    fileSizeBytes: 2105001))
+        );
       },
-      act: (bloc) => bloc.add(LogIn('email', 'password')),
-      expect: () => [
-        LoginInitial(),
-        LoginLoading(),
-        LoginSuccess(user),
-      ],
+      build: () =>FirstScreenBloc(mockFirstScreenApiService),
+      act: (bloc) => bloc.add(FetchUserImage()),
+      expect:()=> [ImageLoading(),ImageFetchSuccessful(UserImage(url: "https://random.dog/4269edc8-56bd-49d9-8288-78f824b8f701.JPG",
+    fileSizeBytes: 2105001))],
     );
   });
 }
