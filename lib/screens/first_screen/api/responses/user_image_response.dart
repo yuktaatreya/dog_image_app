@@ -1,5 +1,6 @@
+import 'package:equatable/equatable.dart';
 import 'package:uuid/uuid.dart';
-class UserImage {
+class UserImage extends Equatable{
   int? fileSizeBytes;
   String url='';
   final String id=Uuid().v1().toString();
@@ -18,4 +19,7 @@ class UserImage {
     data['id']=this.id;
     return data;
   }
+
+  @override
+  List<Object?> get props => [this.url,this.fileSizeBytes];
 }

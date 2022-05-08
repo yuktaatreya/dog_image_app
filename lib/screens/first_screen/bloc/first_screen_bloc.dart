@@ -16,11 +16,19 @@ class FirstScreenBloc extends Bloc<FirstScreenEvent,FirstScreenState>{
       emit(state);
     });
     on<SaveUserImage>((event,emit) async{
-      UserImage userImage = event.userImage;
-      await Hive.openBox('user_image_table');
-      final userImageTable= Hive.box('user_image_table');
-      userImageTable.put(userImage.id, userImage.toJson());
-      print(userImageTable.get(userImage.id));
+      emit (ImageLoading());
+      try{
+        UserImage userImage = event.userImage;
+        await Hive.openBox('user_image_table');
+        final userImageTable= Hive.box('user_image_table');
+        userImageTable.put(userImage.id, userImage.toJson());
+        print(userImageTable.get(userImage.id));
+        emit(SaveImageSuccessful());
+      }
+      catch(e){
+        emit (SaveImageFailed());
+      }
+
 
     });
   }

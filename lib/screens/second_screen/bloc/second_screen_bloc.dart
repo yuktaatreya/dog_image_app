@@ -5,12 +5,12 @@ import 'package:image_app/screens/second_screen/bloc/second_screen_states.dart';
 
 
 class SecondScreenBloc extends Bloc<SecondScreenEvent,SecondScreenState>{
-  SecondScreenApiService _apiService;
+  SecondScreenApiService apiService;
 
-  SecondScreenBloc(this._apiService) : super(SecondScreenInitState()) {
+  SecondScreenBloc(this.apiService) : super(SecondScreenInitState()) {
     on<FetchPosts>((event, emit) async{
       emit(PostsLoading());
-      SecondScreenState state = await _apiService.fetchPosts();
+      SecondScreenState state = await apiService.fetchPosts();
       emit(state);
     });
   }

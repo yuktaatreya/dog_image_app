@@ -1,4 +1,6 @@
-class PostResponse {
+import 'package:equatable/equatable.dart';
+
+class PostResponse extends Equatable{
   late int userId;
   late int id;
   late String title;
@@ -20,4 +22,7 @@ class PostResponse {
     data['body'] = this.body;
     return data;
   }
+
+  @override
+  List<Object?> get props => [userId,id,title,body];
 }
